@@ -13,7 +13,8 @@ router.get('/', async(request, response) => {
     response.json(postFindResult);
 });
 
-
+// next, indicating the next middleware function.
+// ?? asking sangmean 
 router.post('/', async(request, response, next) => {
     try {
         console.log(request, "request");
