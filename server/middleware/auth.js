@@ -4,12 +4,13 @@ const {JWT_SECRET} = config;
 
 const auth = (request, response, next) => {
     // what is "x-auth-token"?????
+    // check key value using postman.
     const token = request.header('x-auth-token');
 
     if(!token) {
         return response.status(401).json({msg: 'Authentication denied because no token exists'});
     }
-    
+
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
         request.user = decoded;
