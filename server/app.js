@@ -33,6 +33,4 @@ app.get("/");
 app.use('/api/post', postRoutes);
 app.use('/api/user', userRoutes);
 
-
-
 export default app;

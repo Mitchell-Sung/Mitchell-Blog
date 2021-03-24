@@ -1,4 +1,5 @@
 import express, { request, response } from 'express';
+import auth from '../../middleware/auth';
 
 // Model
 import Post from '../../models/post';
@@ -13,9 +14,8 @@ router.get('/', async(request, response) => {
     response.json(postFindResult);
 });
 
-// next, indicating the next middleware function.
-// ?? asking sangmean 
-router.post('/', async(request, response, next) => {
+// Allow only authorized user to create posts.
+router.post('/', auth, async(request, response, next) => {
     try {
         console.log(request, "request");
         const {title, contents, fileUrl, creator} = request.body;
