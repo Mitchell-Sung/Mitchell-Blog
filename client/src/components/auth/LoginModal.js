@@ -22,7 +22,9 @@ const LoginModal = () => {
         email:'',
         password:'',
     });
+    
     const dispatch = useDispatch();
+
     // auth in ./client/src/redux/reducers/index.js
     const {errorMsg} = useSelector((state) => state.auth)
     useEffect(() => {

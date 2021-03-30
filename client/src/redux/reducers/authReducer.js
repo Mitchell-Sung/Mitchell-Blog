@@ -1,7 +1,10 @@
 import {
     LOGIN_FAILURE, 
     LOGIN_REQUEST, 
-    LOGIN_SUCCESS, 
+    LOGIN_SUCCESS,
+    LOGOUT_FAILURE,
+    LOGOUT_REQUEST,
+    LOGOUT_SUCCESS,
     CLEAR_ERROR_REQUEST, 
     CLEAR_ERROR_SUCCESS, 
     CLEAR_ERROR_FAILURE
@@ -20,13 +23,13 @@ const initialState = {
 };
 
 const authReducer = (state = initialState, action) => {
-    switch(action.type) {
+    switch(action.type) {        
         case LOGIN_REQUEST:
+        case LOGOUT_REQUEST:
             return {
                 ...state,
                 errorMsg: '',
-                // login img
-                isLoading: true
+                isLoading: true,
             };
         case LOGIN_SUCCESS:
             localStorage.setItem('token', action.payload.token);
@@ -40,6 +43,7 @@ const authReducer = (state = initialState, action) => {
                 errorMsg: ''
             };
         case LOGIN_FAILURE:
+        case LOGOUT_FAILURE:
             localStorage.removeItem('token');
             return {
                 ...state,
@@ -52,6 +56,17 @@ const authReducer = (state = initialState, action) => {
                 userRole: null,
                 errorMsg: action.payload.data.msg
             };
+        case LOGOUT_SUCCESS:
+            localStorage.removeItem('token');
+            return {
+                token: null,
+                user: null,
+                userId: null,
+                isAuthenticated: false,
+                isLoading: false,
+                userRole: null,
+                errorMsg: '',
+            }
         case CLEAR_ERROR_REQUEST:
             return {
                 ...state,

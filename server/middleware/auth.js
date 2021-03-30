@@ -3,8 +3,6 @@ import config from '../config/index';
 const {JWT_SECRET} = config;
 
 const auth = (request, response, next) => {
-    // what is "x-auth-token"?????
-    // check key value using postman.
     const token = request.header('x-auth-token');
 
     if(!token) {
