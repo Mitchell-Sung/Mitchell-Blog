@@ -1,38 +1,30 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { CLEAR_ERROR_REQUEST, REGISTER_REQUEST } from '../../redux/types';
 import {
-	NavLink,
-	Modal,
-	ModalHeader,
-	ModalBody,
+	Alert,
+	Button,
 	Form,
 	FormGroup,
 	Label,
-	Alert,
+	Modal,
+	ModalBody,
+	ModalHeader,
+	NavLink,
 	Input,
-	Button,
 } from 'reactstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { CLEAR_ERROR_REQUEST, LOGIN_REQUEST } from '../../redux/types';
 
-const LoginModal = () => {
+const RegisterModal = () => {
 	const [modal, setModal] = useState(false);
-	const [localMsg, setLocalMsg] = useState('');
-	const [form, setValues] = useState({
+	const [form, setValue] = useState({
+		name: '',
 		email: '',
 		password: '',
 	});
+	const [localMsg, setLocalMsg] = useState('');
+	const { errorMsg } = useSelector((state) => state.auth);
 
 	const dispatch = useDispatch();
-
-	const { errorMsg } = useSelector((state) => state.auth);
-	useEffect(() => {
-		try {
-			setLocalMsg(errorMsg);
-		} catch (err) {
-			console.log(err, 'LoginModal.js');
-		}
-	}, [errorMsg]);
-
 	const handleToggle = () => {
 		dispatch({
 			type: CLEAR_ERROR_REQUEST,
@@ -40,33 +32,51 @@ const LoginModal = () => {
 		setModal(!modal);
 	};
 
+	useEffect(() => {
+		try {
+			setLocalMsg(errorMsg);
+		} catch (err) {
+			console.error(err);
+		}
+	}, [errorMsg]);
+
 	const onChange = (e) => {
-		setValues({
+		setValue({
 			...form,
 			[e.target.name]: e.target.value,
 		});
 	};
 
-	const onSubmit = (e) => {
-		e.preventDefault();
-		const { email, password } = form;
-		const user = { email, password };
+	const onSubmit = (event) => {
+		event.preventDefault();
+		const { name, email, password } = form;
+		const newUser = { name, email, password };
+		console.log(newUser, 'newUser');
 		dispatch({
-			type: LOGIN_REQUEST,
-			payload: user,
+			type: REGISTER_REQUEST,
+			payload: newUser,
 		});
 	};
+
 	return (
 		<div>
 			<NavLink onClick={handleToggle} href="#">
-				login
+				Register
 			</NavLink>
 			<Modal isOpen={modal} toggle={handleToggle}>
-				<ModalHeader toggle={handleToggle}>Login</ModalHeader>
+				<ModalHeader toggle={handleToggle}>Register</ModalHeader>
 				<ModalBody>
 					{localMsg ? <Alert color="danger">{localMsg}</Alert> : null}
 					<Form onSubmit={onSubmit}>
 						<FormGroup>
+							<Label for="name">Name</Label>
+							<Input
+								type="text"
+								name="name"
+								id="name"
+								placeholder="name"
+								onChange={onChange}
+							></Input>
 							<Label for="email">Email</Label>
 							<Input
 								type="email"
@@ -84,7 +94,7 @@ const LoginModal = () => {
 								onChange={onChange}
 							></Input>
 							<Button color="dark" className="mt-2" block>
-								Login
+								Register
 							</Button>
 						</FormGroup>
 					</Form>
@@ -94,4 +104,4 @@ const LoginModal = () => {
 	);
 };
 
-export default LoginModal;
+export default RegisterModal;
