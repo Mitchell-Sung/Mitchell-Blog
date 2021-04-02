@@ -51,7 +51,7 @@ const RegisterModal = () => {
 		event.preventDefault();
 		const { name, email, password } = form;
 		const newUser = { name, email, password };
-		console.log(newUser, 'newUser');
+
 		dispatch({
 			type: REGISTER_REQUEST,
 			payload: newUser,
