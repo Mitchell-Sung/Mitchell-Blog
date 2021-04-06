@@ -2,7 +2,6 @@ import express, { request, response } from 'express';
 import auth from '../../middleware/auth';
 // Model
 import Post from '../../models/post';
-import auth from '../../middleware/auth';
 
 const router = express.Router();
 
@@ -11,7 +10,7 @@ import multer from 'multer';
 import multerS3 from 'multer-s3'; // manage moving files with aws s3
 import path from 'path';
 import AWS from 'aws-sdk'; // support aws tool
-import { dotenv } from '../../../client/config/paths';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -53,7 +52,6 @@ router.post(
 		}
 	}
 );
-
 // s36 end
 
 router.get('/', async (request, response) => {

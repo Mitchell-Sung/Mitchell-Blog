@@ -1,8 +1,6 @@
 import moment from 'moment';
 import mongoose, { mongo } from 'mongoose';
 
-// s36 npm install multer-s3 path aws-sdk
-
 const PostSchema = new mongoose.Schema({
 	title: {
 		type: String,
