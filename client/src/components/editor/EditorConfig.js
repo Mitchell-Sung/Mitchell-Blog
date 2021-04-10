@@ -25,7 +25,7 @@ import Indent from '@ckeditor/ckeditor5-indent/src/indent';
 import IndentBlock from '@ckeditor/ckeditor5-indent/src/indentblock';
 /* import Base64UploadAdapter from "@ckeditor/ckeditor5-upload/src/adapters/base64uploadadapter"; */
 import SimpleUploadAdapter from '@ckeditor/ckeditor5-upload/src/adapters/simpleuploadadapter';
-import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
+//import '@ckeditor/ckeditor5-build-classic/build/translations/ko';
 import dotenv from 'dotenv';
 
 dotenv.config();
