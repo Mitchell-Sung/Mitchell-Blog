@@ -40,7 +40,53 @@ const PostWrite = () => {
 	};
 
 	const getDataFromCKEditor = (event, editor) => {
-		console.log('Editor');
+		const data = editor.getData();
+		console.log(data);
+
+		if (data && data.match('<img src=')) {
+			const whereImg_start = data.indexOf('<img src=');
+			console.log(whereImg_start);
+
+			let whereImg_end = '';
+			let ext_name_find = '';
+			let result_Img_Url = '';
+
+			const ext_name = ['jpeg', 'png', 'jpg', 'gif'];
+
+			for (let i = 0; i < ext_name.length; i++) {
+				if (data.match(ext_name[i])) {
+					console.log(data.indexOf(`${ext_name[i]}`));
+					ext_name_find = ext_name[i];
+					whereImg_end = data.indexOf(`${ext_name[i]}`);
+				}
+			}
+			console.log(ext_name_find);
+			console.log(whereImg_end);
+
+			if (ext_name_find === 'jpeg') {
+				result_Img_Url = data.substring(
+					whereImg_start + 10,
+					whereImg_end + 4
+				);
+			} else {
+				result_Img_Url = data.substring(
+					whereImg_start + 10,
+					whereImg_end + 3
+				);
+			}
+			console.log(result_Img_Url, 'result_Img_Url');
+			setValues({
+				...form,
+				fileUrl: result_Img_Url,
+				contents: data,
+			});
+		} else {
+			setValues({
+				...form,
+				fileUrl: process.env.REACT_APP_BASIC_IMAGE_URL,
+				contents: data,
+			});
+		}
 	};
 
 	return (
