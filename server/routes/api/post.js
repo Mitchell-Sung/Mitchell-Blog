@@ -14,7 +14,6 @@ import path from 'path';
 import AWS from 'aws-sdk'; // support aws tool
 import dotenv from 'dotenv';
 import moment from 'moment';
-import { isNullOrUndefined } from 'util';
 
 dotenv.config();
 
@@ -64,10 +63,11 @@ router.get('/', async (request, response) => {
 	response.json(postFindResult); // server have to response to the browser.
 });
 
-// @route	POST api/post
-// @desc 	Create a Post
-// @access 	Private
-
+/*
+ *	@route	POST api/post
+ *	@desc	Create a Post
+ *  @access	Private
+ */
 // Allow only authorized user to create posts.
 // s40 Add
 router.post('/', auth, uploadS3.none(), async (request, response, next) => {
@@ -88,7 +88,8 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 
 		console.log(findResult, 'Finde Result');
 
-		if (isNullOrUndefined(findResult)) {
+		// isNullOrDefined is deprecated
+		if (findResult == null) {
 			const newCategory = await Category.create({
 				categoryName: category,
 			});
@@ -98,7 +99,7 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 			await Category.findByIdAndUpdate(newCategory._id, {
 				$push: { posts: newPost._id },
 			});
-			await User.findByIdAndUpdate(req.user.id, {
+			await User.findByIdAndUpdate(request.user.id, {
 				$push: { posts: newPost._id },
 			});
 		} else {
@@ -108,13 +109,33 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 			await Post.findByIdAndUpdate(newPost._id, {
 				category: findResult._id,
 			});
-			await User.findByIdAndUpdate(req.user.id, {
+			await User.findByIdAndUpdate(request.user.id, {
 				$push: { posts: newPost._id },
 			});
 		}
-		return res.redirect(`/api/post/${newPost._id}`);
+		return response.redirect(`/api/post/${newPost._id}`);
 	} catch (err) {
 		console.log(err);
+	}
+});
+
+/*
+ *	@route	POST api/post/:id
+ *	@desc	Detail Post
+ *  @access	Public
+ */
+router.get('/:id', async (request, response, next) => {
+	try {
+		const post = await (await Post.findById(request.params.id))
+			.populate({ path: 'creator', select: 'name' }) // user
+			.populate({ path: 'category', select: 'categoryName' });
+		post.views += 1;
+		post.save();
+		console.log(post);
+		response.json(post);
+	} catch (err) {
+		console.error(err);
+		next(err);
 	}
 });
 
