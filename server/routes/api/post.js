@@ -4,6 +4,7 @@ import auth from '../../middleware/auth';
 import Post from '../../models/post';
 import Category from '../../models/category';
 import User from '../../models/user';
+import Comment from '../../models/comment';
 
 const router = express.Router();
 
@@ -135,6 +136,57 @@ router.get('/:id', async (request, response, next) => {
 		response.json(post);
 	} catch (err) {
 		console.error(err);
+		next(err);
+	}
+});
+
+/*
+ *	[Comments Route]
+ * 	@ Route Get api/post/comments
+ * 	@ Desc	Get All Comments
+ * 	@ Access public
+ */
+router.get('/:id/comments', async (request, response) => {
+	try {
+		const comment = await (
+			await Post.findById(request.params.id)
+		).populated({
+			path: 'comment', // check 'comment' from ./models/post.js
+		});
+		const result = comment.comments;
+		console.log(result, 'comment load');
+		response.json(result);
+	} catch (err) {
+		console.log(err);
+	}
+});
+
+router.post('/:id/comments', async (request, response, next) => {
+	const newComment = await Comment.create({
+		contents: request.body.contents,
+		creator: request.body.userId,
+		creatorName: request.body.userName,
+		post: request.body.id,
+		date: moment().format('YYYY-MM-DD hh:mm:ss'),
+	});
+	console.log(newComment, 'newComment');
+
+	try {
+		await Post.findByIdAndUpdate(request.body.id, {
+			$push: {
+				comments: newComment._id,
+			},
+		});
+		await User.findByIdAndUpdate(request.body.userId, {
+			$push: {
+				comments: {
+					post_id: request.body.id,
+					comment_id: newComment._id,
+				},
+			},
+		});
+	} catch (err) {
+		console.log(err);
 		next(err);
 	}
 });
