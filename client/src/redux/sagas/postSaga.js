@@ -16,12 +16,12 @@ import {
 /*
  *	All Posts Load
  */
-// const loadPostAPI = () => {
-// 	return axios.get('/api/post');
-// };
-const loadPostAPI = (payload) => {
-	return axios.get(`/api/post/skip/${payload}`);
+const loadPostAPI = () => {
+	return axios.get('/api/post');
 };
+// const loadPostAPI = (payload) => {
+// 	return axios.get(`/api/post/skip/${payload}`);
+// };
 
 function* loadPosts(action) {
 	try {
