@@ -78,7 +78,7 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 			title: title,
 			contents: contents,
 			fileUrl: fileUrl,
-			creator: creator,
+			creator: request.user.id,
 			date: moment().format('YYYY-MM-DD hh:mm:ss'),
 		});
 
