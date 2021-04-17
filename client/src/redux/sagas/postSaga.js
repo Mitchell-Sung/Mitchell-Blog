@@ -19,9 +19,6 @@ import {
 const loadPostAPI = () => {
 	return axios.get('/api/post');
 };
-// const loadPostAPI = (payload) => {
-// 	return axios.get(`/api/post/skip/${payload}`);
-// };
 
 function* loadPosts(action) {
 	try {
@@ -35,7 +32,6 @@ function* loadPosts(action) {
 			type: POST_LOADING_FAILURE,
 			payload: err,
 		});
-		//yield put(push('/'));
 	}
 }
 
@@ -47,15 +43,12 @@ function* watchLoadPosts() {
  *	Post Detail
  */
 const loadPostDetailAPI = (payload) => {
-	console.log(payload);
 	return axios.get(`/api/post/${payload}`);
 };
 
 function* loadPostDetail(action) {
 	try {
-		console.log(action);
 		const result = yield call(loadPostDetailAPI, action.payload);
-		console.log(result, 'post_detail_saga_data');
 		yield put({
 			type: POST_DETAIL_LOADING_SUCCESS,
 			payload: result.data,
@@ -89,9 +82,7 @@ const uploadPostAPI = (payload) => {
 
 function* uploadPosts(action) {
 	try {
-		console.log(action, 'uploadPost function');
 		const result = yield call(uploadPostAPI, action.payload);
-		console.log(result, 'uploadPostAPI, action.payload');
 		yield put({ type: POST_UPLOADING_SUCCESS, payload: result.data });
 		yield put(push(`/post/${result.data._id}`));
 	} catch (err) {

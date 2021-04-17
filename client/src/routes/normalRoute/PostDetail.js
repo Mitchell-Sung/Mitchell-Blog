@@ -6,7 +6,7 @@ import {
 	POST_DETAIL_LOADING_REQUEST,
 	USER_LOADING_REQUEST,
 } from '../../redux/types';
-import { Button, Col, Row } from 'reactstrap';
+import { Button, Col, Container, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { GrowingSpinner } from '../../components/spinner/Spinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,8 +18,8 @@ import {
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import BallonEditor from '@ckeditor/ckeditor5-editor-balloon/src/ballooneditor';
 import { editorConfiguration } from '../../components/editor/EditorConfig';
+import Comments from '../../components/comments/Comments'; // s48
 
-// Display in the browser from transmitted the server.
 const PostDetail = (request) => {
 	const dispatch = useDispatch();
 	const { postDetail, creatorId, title, loading } = useSelector(
@@ -27,7 +27,8 @@ const PostDetail = (request) => {
 	);
 	const { userId, userName } = useSelector((state) => state.auth);
 
-	console.log(request);
+	// s48
+	const { comments } = useSelector((state) => state.comment); // check redux for "comments"
 
 	useEffect(() => {
 		dispatch({
@@ -36,7 +37,7 @@ const PostDetail = (request) => {
 		});
 		dispatch({
 			type: USER_LOADING_REQUEST,
-			payload: localStorage.getItem('token'), // network > application > inspector
+			payload: localStorage.getItem('token'),
 		});
 	}, [dispatch, request.match.params.id]); // if missing this code, it will be infinit loop.
 
@@ -91,7 +92,7 @@ const PostDetail = (request) => {
 	);
 
 	const Body = (
-		<>
+		<Fragment>
 			{userId === creatorId ? EditButton : HomeButton}
 			<Row className="border-bottom border-top border-primary p-3 d-flex justify-content-between">
 				{(() => {
@@ -136,11 +137,56 @@ const PostDetail = (request) => {
 							disabled="true"
 						/>
 					</Row>
+					{/* s48 */}
+					<Row>
+						<Container className="mb-3 border border-blue rounded">
+							{Array.isArray(comments)
+								? comments.map(
+										({
+											contents,
+											creator,
+											date,
+											_id,
+											creatorName,
+										}) => (
+											<div key={_id}>
+												<Row className="justify-content-between p-2">
+													<div className="font-weight-bold">
+														{creatorName
+															? creatorName
+															: creator}
+													</div>
+													<div className="text-small">
+														<span className="font-weight-bold">
+															{date.split(' ')[0]}
+														</span>
+														<span className="font-weight-light">
+															{' '}
+															{date.split(' ')[1]}
+														</span>
+													</div>
+												</Row>
+												<Row className="p-2">
+													<div>{contents}</div>
+												</Row>
+												<hr />
+											</div>
+										)
+								  )
+								: 'Creator'}
+							<Comments
+								id={request.match.params.id}
+								userId={userId}
+								userName={userName}
+							/>
+						</Container>
+						{/* e48 */}
+					</Row>
 				</Fragment>
 			) : (
 				<h1>Hi</h1>
 			)}
-		</>
+		</Fragment>
 	);
 
 	return (

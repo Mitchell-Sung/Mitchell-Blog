@@ -1,6 +1,6 @@
 import express, { request, response } from 'express';
 import auth from '../../middleware/auth';
-// Model
+// Models
 import Post from '../../models/post';
 import Category from '../../models/category';
 import User from '../../models/user';
@@ -26,7 +26,7 @@ const s3 = new AWS.S3({
 const uploadS3 = multer({
 	storage: multerS3({
 		s3, // access key
-		bucket: 'mitchell-blog/upload', // will change aws educate account
+		bucket: 'mitchell-blog/upload',
 		region: 'ca-central-1',
 		key(request, file, callback) {
 			const extension = path.extname(file.originalname);
@@ -37,9 +37,11 @@ const uploadS3 = multer({
 	limits: { fileSize: 100 * 1024 * 1024 }, // 100 mb
 });
 
-// @route     POST api/post/image
-// @desc      Create a Post
-// @access    Private
+/*
+ *	@ Route		POST api/post/image
+ *	@ Desc		Create a Post
+ * 	@ Access	Private
+ */
 router.post(
 	'/image',
 	uploadS3.array('upload', 5),
@@ -56,12 +58,10 @@ router.post(
 		}
 	}
 );
-// s36 end
 
 router.get('/', async (request, response) => {
 	const postFindResult = await Post.find();
-	console.log(postFindResult, 'All Post Get');
-	response.json(postFindResult); // server have to response to the browser.
+	response.json(postFindResult);
 });
 
 /*
@@ -73,7 +73,6 @@ router.get('/', async (request, response) => {
 // s40 Add
 router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 	try {
-		console.log(request, 'request');
 		const { title, contents, fileUrl, creator, category } = request.body;
 		const newPost = await Post.create({
 			title: title,
@@ -87,9 +86,6 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 			categoryName: category,
 		});
 
-		console.log(findResult, 'Finde Result');
-
-		// isNullOrDefined is deprecated
 		if (findResult == null) {
 			const newCategory = await Category.create({
 				categoryName: category,
@@ -132,7 +128,6 @@ router.get('/:id', async (request, response, next) => {
 			.populate({ path: 'category', select: 'categoryName' });
 		post.views += 1;
 		post.save();
-		console.log(post);
 		response.json(post);
 	} catch (err) {
 		console.error(err);
@@ -148,13 +143,10 @@ router.get('/:id', async (request, response, next) => {
  */
 router.get('/:id/comments', async (request, response) => {
 	try {
-		const comment = await (
-			await Post.findById(request.params.id)
-		).populated({
-			path: 'comment', // check 'comment' from ./models/post.js
+		const comment = await Post.findById(request.params.id).populate({
+			path: 'comments', // check 'comment' from ./models/post.js
 		});
 		const result = comment.comments;
-		console.log(result, 'comment load');
 		response.json(result);
 	} catch (err) {
 		console.log(err);
@@ -169,13 +161,10 @@ router.post('/:id/comments', async (request, response, next) => {
 		post: request.body.id,
 		date: moment().format('YYYY-MM-DD hh:mm:ss'),
 	});
-	console.log(newComment, 'newComment');
 
 	try {
 		await Post.findByIdAndUpdate(request.body.id, {
-			$push: {
-				comments: newComment._id,
-			},
+			$push: { comments: newComment._id },
 		});
 		await User.findByIdAndUpdate(request.body.userId, {
 			$push: {
@@ -191,5 +180,4 @@ router.post('/:id/comments', async (request, response, next) => {
 	}
 });
 
-// shortcut "ed"
 export default router;

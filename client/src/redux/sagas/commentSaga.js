@@ -11,18 +11,15 @@ import {
 import { push } from 'connected-react-router';
 
 /*
- *  Load Comment
+ *  Load Comment (s47)
  */
 const loadCommentsAPI = (payload) => {
-	console.log(payload, 'loadCommentAPI ID');
-	// Check ./server/routes/api/post.js
 	return axios.get(`/api/post/${payload}/comments`);
 };
 
 function* loadComments(action) {
 	try {
 		const result = yield call(loadCommentsAPI, action.payload);
-		console.log(result);
 		yield put({
 			type: COMMENT_LOADING_SUCCESS,
 			payload: result.data,
@@ -42,18 +39,15 @@ function* watchLoadComments() {
 }
 
 /*
- *  Upload Comment
+ *  Upload Comment (s47)
  */
 const uploadCommentsAPI = (payload) => {
-	console.log(payload.id, 'loadCommentAPI ID');
 	return axios.post(`/api/post/${payload.id}/comments`, payload);
 };
 
 function* uploadComments(action) {
 	try {
-		console.log(action);
 		const result = yield call(uploadCommentsAPI, action.payload);
-		console.log(result, 'Upload comment');
 		yield put({
 			type: COMMENT_UPLOADING_SUCCESS,
 			payload: result.data,
