@@ -47,7 +47,7 @@ router.post(
 	uploadS3.array('upload', 5),
 	async (request, response, next) => {
 		try {
-			console.log(request.files.map((v) => v.location));
+			//console.log(request.files.map((v) => v.location));
 			response.json({
 				uploaded: true,
 				url: request.files.map((v) => v.location),
@@ -69,8 +69,6 @@ router.get('/', async (request, response) => {
  *	@desc	Create a Post
  *  @access	Private
  */
-// Allow only authorized user to create posts.
-// s40 Add
 router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 	try {
 		const { title, contents, fileUrl, creator, category } = request.body;
@@ -176,6 +174,78 @@ router.post('/:id/comments', async (request, response, next) => {
 		});
 	} catch (err) {
 		console.log(err);
+		next(err);
+	}
+});
+
+/*
+ *	[s49]
+ * 	@ Route 	Delete api/post/:id
+ * 	@ Desc		Delete a Post
+ * 	@ Access 	Private
+ */
+router.delete('/:id', auth, async (request, response) => {
+	await Post.deleteMany({ _id: request.params.id });
+	await Comment.deleteMany({ post: request.params.id });
+	await User.findByIdAndUpdate(request.user.id, {
+		$pull: {
+			posts: request.params.id,
+			comments: { post_id: request.params.id },
+		},
+	});
+
+	const CategoryUpdateResult = await Category.findOneAndUpdate(
+		{ posts: request.params.id },
+		{ $pull: { posts: request.params.id } },
+		{ new: true }
+	);
+
+	if (CategoryUpdateResult.posts.length === 0) {
+		await Category.deleteMany({ _id: CategoryUpdateResult });
+	}
+
+	return response.json({ success: true });
+});
+
+/*
+ *	[s50]
+ * 	@ Route 	GET api/post/:id/edit
+ * 	@ Desc		Edit a Post
+ * 	@ Access 	Private
+ */
+router.get('/:id/edit', auth, async (request, response, next) => {
+	try {
+		const post = await (await Post.findById(request.params.id)).populate(
+			'creator',
+			'name'
+		);
+		response.json(post);
+	} catch (err) {
+		console.error(err);
+	}
+});
+
+router.post('/:id/edit', auth, async (request, response, next) => {
+	// console.log(request, 'api/post/:id/edit');
+	const {
+		body: { title, contents, fileUrl, id },
+	} = request;
+
+	try {
+		const modified_post = await Post.findByIdAndUpdate(
+			id,
+			{
+				title,
+				contents,
+				fileUrl,
+				date: moment().format('YYYY-MM-DD hh:mm:ss'),
+			},
+			{ new: true } // check mogoose.
+		);
+		// console.log(modified_post, 'Edit Post');
+		response.redirect(`/api/post/${modified_post.id}`);
+	} catch (err) {
+		console.error(err);
 		next(err);
 	}
 });

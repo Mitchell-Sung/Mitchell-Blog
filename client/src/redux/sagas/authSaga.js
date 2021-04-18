@@ -1,5 +1,4 @@
 import axios from 'axios';
-import e from 'cors';
 import { all, call, put, takeEvery, fork } from 'redux-saga/effects';
 import {
 	LOGIN_FAILURE,
@@ -21,7 +20,6 @@ import {
 
 // s22 User Login
 const loginUserAPI = (loginData) => {
-	console.log(loginData, 'loginData');
 	const config = {
 		Headers: {
 			'Content-Type': 'application/json',
@@ -33,8 +31,6 @@ const loginUserAPI = (loginData) => {
 function* loginUser(loginAction) {
 	try {
 		const result = yield call(loginUserAPI, loginAction.payload);
-		console.log(result);
-		// put is the same as Dispatch
 		yield put({
 			type: LOGIN_SUCCESS,
 			payload: result.data,

@@ -2,6 +2,9 @@ import axios from 'axios';
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 import {
+	POST_DELETE_FAILURE,
+	POST_DELETE_REQUEST,
+	POST_DELETE_SUCCESS,
 	POST_DETAIL_LOADING_FAILURE,
 	POST_DETAIL_LOADING_REQUEST,
 	POST_DETAIL_LOADING_SUCCESS,
@@ -95,10 +98,39 @@ function* watchUploadPosts() {
 	yield takeEvery(POST_UPLOADING_REQUEST, uploadPosts);
 }
 
+/*
+ *	Delete Post [s49]
+ */
+const DeletePostAPI = (payload) => {
+	const config = { headers: { 'Content-Type': 'application/json' } };
+	const token = payload.token;
+
+	if (token) {
+		config.headers['x-auth-token'] = token;
+	}
+
+	return axios.delete(`/api/post/${payload.id}`, config);
+};
+
+function* DeletePost(action) {
+	try {
+		const result = yield call(DeletePostAPI, action.payload);
+		yield put({ type: POST_DELETE_SUCCESS, payload: result.data });
+		yield put(push('/'));
+	} catch (err) {
+		yield put({ type: POST_DELETE_FAILURE, payload: err });
+	}
+}
+
+function* watchDeletePost() {
+	yield takeEvery(POST_DELETE_REQUEST, DeletePost);
+}
+
 export default function* postSaga() {
 	yield all([
 		fork(watchLoadPosts),
 		fork(watchUploadPosts),
 		fork(watchLoadPostDetail),
+		fork(watchDeletePost),
 	]);
 }
