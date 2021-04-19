@@ -178,7 +178,7 @@ const PostEditUploadAPI = (payload) => {
 	if (token) {
 		config.headers['x-auth-token'] = token;
 	}
-
+	// check the order of the two values, such as payload and config
 	return axios.post(`/api/post/${payload.id}/edit`, payload, config);
 };
 
