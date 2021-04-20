@@ -47,11 +47,11 @@ const PostWrite = () => {
 
 	const getDataFromCKEditor = (event, editor) => {
 		const data = editor.getData();
-		console.log(data);
+		// console.log(data);
 
 		if (data && data.match('<img src=')) {
 			const whereImg_start = data.indexOf('<img src=');
-			console.log(whereImg_start);
+			// console.log(whereImg_start);
 
 			let whereImg_end = '';
 			let ext_name_find = '';
@@ -66,8 +66,8 @@ const PostWrite = () => {
 					whereImg_end = data.indexOf(`${ext_name[i]}`);
 				}
 			}
-			console.log(ext_name_find);
-			console.log(whereImg_end);
+			// console.log(ext_name_find);
+			// console.log(whereImg_end);
 
 			if (ext_name_find === 'jpeg') {
 				result_Img_Url = data.substring(
@@ -80,7 +80,7 @@ const PostWrite = () => {
 					whereImg_end + 3
 				);
 			}
-			console.log(result_Img_Url, 'result_Img_Url');
+			// console.log(result_Img_Url, 'result_Img_Url');
 			setValues({
 				...form,
 				fileUrl: result_Img_Url,

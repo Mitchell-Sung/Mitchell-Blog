@@ -5,11 +5,15 @@ import { Helmet } from 'react-helmet';
 import { Row } from 'reactstrap';
 import { GrowingSpinner } from '../../components/spinner/Spinner';
 import PostCardOne from '../../components/post/PostCardOne';
+import Category from '../../components/post/Category';
 
 // Main Component (Home)
 const PostCardList = () => {
 	// posts from ./client/redux/reducers/postReducer.js/initialState
-	const { posts } = useSelector((state) => state.post);
+	// [s53] Add parameter such as categoryFindResult...
+	const { posts, categoryFindResult, loading, postCount } = useSelector(
+		(state) => state.post
+	);
 
 	const dispatch = useDispatch();
 
@@ -21,6 +25,12 @@ const PostCardList = () => {
 		// npm install react-helmet
 		<Fragment>
 			<Helmet title="Home" />
+
+			{/* [s53] */}
+			<Row className="border-bottom border-top border-primary py-2 mb-3">
+				<Category posts={categoryFindResult} />
+			</Row>
+
 			<Row className="border-bottom border-top border-primary py-2 mb-3">
 				{posts ? <PostCardOne posts={posts} /> : GrowingSpinner}
 			</Row>

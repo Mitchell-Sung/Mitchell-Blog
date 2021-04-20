@@ -59,9 +59,20 @@ router.post(
 	}
 );
 
+/*
+ *	@ Route		GET api/post
+ *	@ Desc		More Loading Posts
+ * 	@ Access	public
+ */
 router.get('/', async (request, response) => {
 	const postFindResult = await Post.find();
-	response.json(postFindResult);
+
+	// [s53]
+	const categoryFindResult = await Category.find();
+	const result = { postFindResult, categoryFindResult };
+
+	// [s53]
+	response.json(result);
 });
 
 /*
@@ -244,6 +255,31 @@ router.post('/:id/edit', auth, async (request, response, next) => {
 		);
 		// console.log(modified_post, 'Edit Post');
 		response.redirect(`/api/post/${modified_post.id}`);
+	} catch (err) {
+		console.error(err);
+		next(err);
+	}
+});
+
+/*
+ *	[s54]
+ * 	@ Route 	GET api/category/categoryName
+ * 	@ Desc		Search Category
+ * 	@ Access 	public
+ */
+router.get('/category/:categoryName', async (request, response, next) => {
+	try {
+		const result = await Category.findOne(
+			{
+				categoryName: {
+					$regex: request.params.categoryName, // MongoDB
+					$options: 'i', // MongoDB
+				},
+			},
+			'posts'
+		).populate({ path: 'posts' });
+		// console.log(result, 'Category Find Result');
+		response.send(result);
 	} catch (err) {
 		console.error(err);
 		next(err);

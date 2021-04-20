@@ -24,7 +24,7 @@
 	object-fit: cover;
 }
 
-// s39: CKEditor Setting
+// [s39]
 // Install "IntelliSense for CSS names in HTML" package on vs code editor.
 .ck {
 	.ck-editor {
@@ -50,7 +50,14 @@ html {
 	overflow-x: hidden;
 }
 
-// s48
+// [s48]
 textarea {
 	resize: none;
+}
+
+// [s53]
+.my_category {
+	&:last-child {
+		margin-bottom: 0.25rem;
+	}
 }
