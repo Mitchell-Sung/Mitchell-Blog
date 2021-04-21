@@ -10,7 +10,11 @@ import PostDetail from './normalRoute/PostDetail';
 import CategoryResult from './normalRoute/CategoryResult';
 import PostEdit from './normalRoute/PostEdit';
 import Search from './normalRoute/Search';
-import { EditProtectedRoute } from './protectedRoute/ProtectedRoute';
+import {
+	EditProtectedRoute,
+	ProfileProtectedRoute,
+} from './protectedRoute/ProtectedRoute';
+import Profile from './normalRoute/Profile';
 
 const MyRouter = () => {
 	return (
@@ -37,6 +41,12 @@ const MyRouter = () => {
 						path="/search/:searchTerm"
 						exact
 						component={Search}
+					/>
+					{/* [s58] */}
+					<ProfileProtectedRoute
+						path="/user/:userName/profile"
+						exact
+						component={Profile}
 					/>
 					<Redirect from="*" to="/" />
 				</Switch>

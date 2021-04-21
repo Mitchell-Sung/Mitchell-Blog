@@ -16,9 +16,14 @@ import {
 	CLEAR_ERROR_SUCCESS,
 	CLEAR_ERROR_FAILURE,
 	CLEAR_ERROR_REQUEST,
+	PASSWORD_EDIT_UPLOADING_FAILURE,
+	PASSWORD_EDIT_UPLOADING_SUCCESS,
+	PASSWORD_EDIT_UPLOADING_REQUEST,
 } from '../types';
 
-// s22 User Login
+/**
+ * 	[s22] User Login
+ */
 const loginUserAPI = (loginData) => {
 	const config = {
 		Headers: {
@@ -47,7 +52,9 @@ function* watchLoginUser() {
 	yield takeEvery(LOGIN_REQUEST, loginUser);
 }
 
-// s24 User Logout
+/**
+ * 	[s24] User Logout
+ */
 function* logout(loginAction) {
 	try {
 		yield put({ type: LOGOUT_SUCCESS });
@@ -61,7 +68,9 @@ function* watchLogout() {
 	yield takeEvery(LOGOUT_REQUEST, logout);
 }
 
-// S28 Register User
+/**
+ * 	[s28] Register User
+ */
 const registerUserAPI = (request) => {
 	const config = {
 		Headers: {
@@ -89,8 +98,9 @@ function* registerUser(action) {
 function* watchRegisterUser() {
 	yield takeEvery(REGISTER_REQUEST, registerUser);
 }
-
-// s28 Clear Error
+/**
+ * 	[s28] Clear Error
+ */
 function* clearError() {
 	try {
 		yield put({
@@ -108,7 +118,9 @@ function* watchClearError() {
 	yield takeEvery(CLEAR_ERROR_REQUEST, clearError);
 }
 
-// s27 User Loading
+/**
+ * 	[s27] User Loading
+ */
 const userLoadingAPI = (token) => {
 	const config = {
 		headers: {
@@ -140,6 +152,40 @@ function* watchUserLoading() {
 	yield takeEvery(USER_LOADING_REQUEST, userLoading);
 }
 
+/**
+ * 	[s58] Edit Password
+ */
+const EditPasswordAPI = (payload) => {
+	const config = { headers: { 'Content-Type': 'application/json' } };
+	const token = payload.token;
+
+	if (token) {
+		config.headers['x-auth-token'] = token;
+	}
+	// Check the order of 'payload' and 'config'
+	return axios.post(`/api/user/${payload.userName}/profile`, payload, config);
+};
+
+function* EditPassword(action) {
+	try {
+		// console.log(action, 'EditPassword');
+		const result = yield call(EditPasswordAPI, action.payload);
+		yield put({
+			type: PASSWORD_EDIT_UPLOADING_SUCCESS,
+			payload: result.data,
+		});
+	} catch (err) {
+		yield put({
+			type: PASSWORD_EDIT_UPLOADING_FAILURE,
+			payload: err.response,
+		});
+	}
+}
+
+function* watchEditPassword() {
+	yield takeEvery(PASSWORD_EDIT_UPLOADING_REQUEST, EditPassword);
+}
+
 export default function* authSaga() {
 	yield all([
 		fork(watchLoginUser),
@@ -147,5 +193,6 @@ export default function* authSaga() {
 		fork(watchUserLoading),
 		fork(watchRegisterUser),
 		fork(watchClearError),
+		fork(watchEditPassword),
 	]);
 }

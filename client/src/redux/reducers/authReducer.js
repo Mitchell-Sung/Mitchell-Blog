@@ -29,6 +29,7 @@ const initialState = {
 	userRole: '',
 	errorMsg: '',
 	successMsg: '',
+	previousMatchMsg: '',
 };
 
 const authReducer = (state = initialState, action) => {
@@ -79,21 +80,6 @@ const authReducer = (state = initialState, action) => {
 				userRole: null,
 				errorMsg: '',
 			};
-		case CLEAR_ERROR_REQUEST:
-			return {
-				...state,
-				errorMsg: null,
-			};
-		case CLEAR_ERROR_SUCCESS:
-			return {
-				...state,
-				errorMsg: null,
-			};
-		case CLEAR_ERROR_FAILURE:
-			return {
-				...state,
-				errorMsg: null,
-			};
 		case USER_LOADING_REQUEST:
 			return {
 				...state,
@@ -138,6 +124,22 @@ const authReducer = (state = initialState, action) => {
 				successMsg: '',
 				errorMsg: action.payload.fail_msg,
 				previousMatchMsg: action.payload.match_msg,
+			};
+		case CLEAR_ERROR_REQUEST:
+			return {
+				...state,
+			};
+		case CLEAR_ERROR_SUCCESS:
+			return {
+				...state,
+				errorMsg: '',
+				previousMatchMsg: '',
+			};
+		case CLEAR_ERROR_FAILURE:
+			return {
+				...state,
+				errorMsg: 'Clear Error Fail',
+				previousMatchMsg: 'Clear Error Fail',
 			};
 		default:
 			return state;
