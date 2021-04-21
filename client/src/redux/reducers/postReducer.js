@@ -50,6 +50,7 @@ export default function postReducer(state = initialState, action) {
 				...state,
 				posts: [...state.posts, ...action.payload.postFindResult], //[s53]
 				categoryFindResult: action.payload.categoryFindResult, //[s53]
+				postCount: action.payload.postCount, //[s59]
 				loading: false,
 			};
 		case POST_LOADING_FAILURE:

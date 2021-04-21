@@ -59,20 +59,30 @@ router.post(
 	}
 );
 
-/*
+/**
+ *	[s59]
  *	@ Route		GET api/post
  *	@ Desc		More Loading Posts
  * 	@ Access	public
  */
-router.get('/', async (request, response) => {
-	const postFindResult = await Post.find();
+router.get('/skip/:skip', async (request, response) => {
+	try {
+		const postCount = await Post.countDocuments();
+		const postFindResult = await Post.find()
+			.skip(Number(request.params.skip))
+			.limit(6)
+			.sort({ date: -1 });
 
-	// [s53]
-	const categoryFindResult = await Category.find();
-	const result = { postFindResult, categoryFindResult };
+		// [s53]
+		const categoryFindResult = await Category.find();
+		const result = { postFindResult, categoryFindResult, postCount };
 
-	// [s53]
-	response.json(result);
+		// [s53]
+		response.json(result);
+	} catch (err) {
+		console.error(err);
+		response.json({ msg: 'There are no more posts' });
+	}
 });
 
 /*
@@ -82,6 +92,7 @@ router.get('/', async (request, response) => {
  */
 router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 	try {
+		// console.log(request, 'request');
 		const { title, contents, fileUrl, creator, category } = request.body;
 		const newPost = await Post.create({
 			title: title,
@@ -94,6 +105,8 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 		const findResult = await Category.findOne({
 			categoryName: category,
 		});
+
+		// console.log(findResult, 'Find Result');
 
 		if (findResult == null) {
 			const newCategory = await Category.create({
@@ -121,7 +134,7 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 		}
 		return response.redirect(`/api/post/${newPost._id}`);
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 	}
 });
 
@@ -163,6 +176,7 @@ router.get('/:id/comments', async (request, response) => {
 });
 
 router.post('/:id/comments', async (request, response, next) => {
+	// console.log(request, 'Comments');
 	const newComment = await Comment.create({
 		contents: request.body.contents,
 		creator: request.body.userId,
@@ -170,6 +184,7 @@ router.post('/:id/comments', async (request, response, next) => {
 		post: request.body.id,
 		date: moment().format('YYYY-MM-DD hh:mm:ss'),
 	});
+	// console.log(newComment, "newComment");
 
 	try {
 		await Post.findByIdAndUpdate(request.body.id, {
@@ -184,7 +199,7 @@ router.post('/:id/comments', async (request, response, next) => {
 			},
 		});
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		next(err);
 	}
 });

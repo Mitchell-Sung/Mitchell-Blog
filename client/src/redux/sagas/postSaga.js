@@ -28,16 +28,18 @@ import {
 	SEARCH_SUCCESS,
 } from '../types';
 
-/*
+/**
  *	All Posts Load
  */
-const loadPostAPI = () => {
-	return axios.get('/api/post');
+const loadPostAPI = (payload) => {
+	return axios.get(`/api/post/skip/${payload}`); // [s59]
 };
 
+// [s59] add action
 function* loadPosts(action) {
 	try {
-		const result = yield call(loadPostAPI, action.payload);
+		const result = yield call(loadPostAPI, action.payload); // [s59] add action.payload
+		// console.log(result, 'loadPosts');
 		yield put({
 			type: POST_LOADING_SUCCESS,
 			payload: result.data,

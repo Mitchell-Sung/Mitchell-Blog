@@ -45,6 +45,9 @@ const PostWrite = () => {
 		});
 	};
 
+	/**
+	 *	[s39]
+	 */
 	const getDataFromCKEditor = (event, editor) => {
 		const data = editor.getData();
 		// console.log(data);
@@ -89,6 +92,7 @@ const PostWrite = () => {
 		} else {
 			setValues({
 				...form,
+				// fileUrl: 'https://source.unsplash.com/random/301x201',
 				fileUrl: process.env.REACT_APP_BASIC_IMAGE_URL,
 				contents: data,
 			});
