@@ -12,7 +12,7 @@ import morgan from 'morgan';
 import postRoutes from './routes/api/post';
 import userRoutes from './routes/api/user';
 import authRoutes from './routes/api/auth';
-import searchRoutes from './routes/api/search';
+import searchRoutes from './routes/api/search'; // [s56]
 
 const app = express();
 const { MONGO_URI } = config;
@@ -28,17 +28,17 @@ mongoose
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 		useCreateIndex: true,
+		useFindAndModify: false,
 	})
 	.then(() => console.log('MongoDB connecting Success!'))
-	.catch((e) => console.log(e));
+	.catch((err) => console.log(err));
 
 /*
  *  User Routes
  */
-app.get('/');
 app.use('/api/post', postRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/search', searchRoutes);
+app.use('/api/search', searchRoutes); // [s56]
 
 export default app;

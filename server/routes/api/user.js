@@ -2,15 +2,17 @@ import express, { response } from 'express';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from '../../config/index';
-const { JWT_SECRET } = config;
-
 import User from '../../models/user';
+import auth from '../../middleware/auth';
 
+const { JWT_SECRET } = config;
 const router = express.Router();
 
-// @routes  GET api/user
-// @Desc    GET all user
-// @Acess   public
+/*
+ *	@ Routes	GET api/user
+ *	@ Desc		GET all user
+ * 	@ Access	Pulbic
+ */
 router.get('/', async (request, response) => {
 	try {
 		const users = await User.find();
@@ -22,9 +24,11 @@ router.get('/', async (request, response) => {
 	}
 });
 
-// @routes  POST api/user
-// @Desc    POST all user
-// @Acess   public
+/*
+ *	@ Routes	POST all user
+ *	@ Desc		GET all user
+ * 	@ Access	Pulbic
+ */
 router.post('/', async (request, response) => {
 	const { name, email, password } = request.body;
 
@@ -37,11 +41,13 @@ router.post('/', async (request, response) => {
 			return response
 				.status(200)
 				.json({ msg: 'User already joined exists.' });
+
 		const newUser = new User({
 			name,
 			email,
 			password,
 		});
+
 		bcryptjs.genSalt(10, (err, salt) => {
 			bcryptjs.hash(newUser.password, salt, (err, hash) => {
 				if (err) throw err;
@@ -67,6 +73,46 @@ router.post('/', async (request, response) => {
 			});
 		});
 	});
+});
+
+/*
+ *	@ Routes	POST	api/user/:username/profile
+ *	@ Desc		POST	Edit Password
+ * 	@ Access	Private
+ */
+router.post('/:userName/profile', auth, async (request, response) => {
+	try {
+		const { previousPassword, password, rePassword, userId } = request.body;
+		const result = await User.findById(userId, 'password');
+		// console.log(request.body, 'userName Profile');
+
+		bcryptjs.compare(previousPassword, result.password).then((isMatch) => {
+			if (!isMatch) {
+				return response.status(400).json({
+					match_msg: 'It does not match the existing password.',
+				});
+			} else {
+				if (password === rePassword) {
+					bcryptjs.genSalt(10, (err, salt) => {
+						bcryptjs.hash(password, salt, (err, hash) => {
+							if (err) throw err;
+							result.password = hash;
+							result.save();
+						});
+					});
+					response.status(200).json({
+						success_msg: 'Password update has succeeded.',
+					});
+				} else {
+					response
+						.status(400)
+						.json({ fail_msg: 'The new password does not match.' });
+				}
+			}
+		});
+	} catch (err) {
+		console.error(err);
+	}
 });
 
 export default router;

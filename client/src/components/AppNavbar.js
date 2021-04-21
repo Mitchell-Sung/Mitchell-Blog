@@ -16,6 +16,7 @@ import LoginModal from './auth/LoginModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOGOUT_REQUEST, POST_WRITE_REQUEST } from '../redux/types';
 import RegisterModal from './auth/RegisterModal';
+import SearchInput from './search/searchInput';
 
 const AppNavbar = () => {
 	const [isOpen, setIsOpen] = useState(false);
@@ -117,6 +118,8 @@ const AppNavbar = () => {
 					</Link>
 					<NavbarToggler onClick={handleToggle} />
 					<Collapse isOpen={isOpen} navbar>
+						{/* [s56] */}
+						<SearchInput isOpen={isOpen} />
 						<Nav
 							className="ml-auto d-flex justify-content-arount"
 							navbar
