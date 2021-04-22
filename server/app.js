@@ -5,7 +5,7 @@ import hpp from 'hpp';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
-import path from 'path';
+import path from 'path'; // [s60]
 
 /*
  *  Routes
@@ -17,7 +17,7 @@ import searchRoutes from './routes/api/search'; // [s56]
 
 const app = express();
 const { MONGO_URI } = config;
-const prod = process.env.NODE_ENV === 'production';
+const prod = process.env.NODE_ENV === 'production'; // [s60]
 
 app.use(hpp());
 app.use(helmet());
@@ -54,13 +54,16 @@ app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/search', searchRoutes); // [s56]
 
-// if (prod) {
-// 	app.use(express.static(path.join(__dirname, '../client/build')));
-// 	app.get('*', (request, response) => {
-// 		response.sendFile(
-// 			path.resolve(__dirname, '../client/build', 'index.html')
-// 		);
-// 	});
-// }
+/**
+ * 	[s60]
+ */
+if (prod) {
+	app.use(express.static(path.join(__dirname, '../client/build')));
+	app.get('*', (request, response) => {
+		response.sendFile(
+			path.resolve(__dirname, '../client/build', 'index.html')
+		);
+	});
+}
 
 export default app;
