@@ -21,10 +21,11 @@ const RegisterModal = () => {
 		email: '',
 		password: '',
 	});
+
 	const [localMsg, setLocalMsg] = useState('');
 	const { errorMsg } = useSelector((state) => state.auth);
-
 	const dispatch = useDispatch();
+
 	const handleToggle = () => {
 		dispatch({
 			type: CLEAR_ERROR_REQUEST,
@@ -76,7 +77,7 @@ const RegisterModal = () => {
 								id="name"
 								placeholder="name"
 								onChange={onChange}
-							></Input>
+							/>
 							<Label for="email">Email</Label>
 							<Input
 								type="email"
@@ -84,7 +85,7 @@ const RegisterModal = () => {
 								id="email"
 								placeholder="Email"
 								onChange={onChange}
-							></Input>
+							/>
 							<Label for="password">Password</Label>
 							<Input
 								type="password"
@@ -92,7 +93,7 @@ const RegisterModal = () => {
 								id="password"
 								placeholder="Password"
 								onChange={onChange}
-							></Input>
+							/>
 							<Button color="dark" className="mt-2" block>
 								Register
 							</Button>

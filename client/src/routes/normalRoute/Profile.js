@@ -92,6 +92,16 @@ const Profile = () => {
 									className="form-control mb-2"
 									onChange={onChange}
 								/>
+							</FormGroup>
+							<FormGroup>
+								<Label for="title">Check Password</Label>
+								<Input
+									type="password"
+									name="rePassword"
+									id="rePassword"
+									className="form-control mb-2"
+									onChange={onChange}
+								/>
 								{errorMsg ? (
 									<Alert color="danger">{errorMsg}</Alert>
 								) : (

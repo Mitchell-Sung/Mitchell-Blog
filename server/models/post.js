@@ -1,6 +1,9 @@
 import moment from 'moment';
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 
+/**
+ * 	Create post schema
+ */
 const PostSchema = new mongoose.Schema({
 	title: {
 		type: String,

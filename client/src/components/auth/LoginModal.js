@@ -21,15 +21,14 @@ const LoginModal = () => {
 		email: '',
 		password: '',
 	});
-
 	const dispatch = useDispatch();
-
 	const { errorMsg } = useSelector((state) => state.auth);
+
 	useEffect(() => {
 		try {
 			setLocalMsg(errorMsg);
 		} catch (err) {
-			console.log(err, 'LoginModal.js');
+			console.error(err);
 		}
 	}, [errorMsg]);
 
@@ -56,6 +55,7 @@ const LoginModal = () => {
 			payload: user,
 		});
 	};
+
 	return (
 		<div>
 			<NavLink onClick={handleToggle} href="#">
@@ -74,7 +74,7 @@ const LoginModal = () => {
 								id="email"
 								placeholder="Email"
 								onChange={onChange}
-							></Input>
+							/>
 							<Label for="password">Password</Label>
 							<Input
 								type="password"
@@ -82,7 +82,7 @@ const LoginModal = () => {
 								id="password"
 								placeholder="Password"
 								onChange={onChange}
-							></Input>
+							/>
 							<Button color="dark" className="mt-2" block>
 								Login
 							</Button>

@@ -1,25 +1,27 @@
-import express, { request, response } from 'express';
+import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import auth from '../../middleware/auth'; // check path.
 import config from '../../config/index';
-const { JWT_SECRET } = config;
-
-// Model
 import User from '../../models/user';
 
+const { JWT_SECRET } = config;
 const router = express.Router();
 
-// @route   POST    api/auth
-// @desc    Auth    user
-// @access  public
+/**
+ * 	@ Route 	POST 	api/auth
+ * 	@ Desc 		Auth 	user
+ * 	@ Access	Public
+ */
 router.post('/', (request, response) => {
 	const { email, password } = request.body;
 
+	// Simple validation
 	if (!email || !password) {
 		return response.status(400).json({ msg: 'Fill in all fields.' });
 	}
 
+	// Check for existing user
 	User.findOne({ email }).then((user) => {
 		if (!user)
 			return response.status(400).json({ msg: 'User does not exist.' });
@@ -60,7 +62,7 @@ router.get('/user', auth, async (request, response) => {
 		if (!user) throw Error('User does not exist');
 		response.json(user);
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		response.status(400).json({ msg: err.message });
 	}
 });

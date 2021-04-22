@@ -57,33 +57,6 @@ function* watchLoadPosts() {
 }
 
 /*
- *	Post Detail
- */
-const loadPostDetailAPI = (payload) => {
-	return axios.get(`/api/post/${payload}`);
-};
-
-function* loadPostDetail(action) {
-	try {
-		const result = yield call(loadPostDetailAPI, action.payload);
-		yield put({
-			type: POST_DETAIL_LOADING_SUCCESS,
-			payload: result.data,
-		});
-	} catch (err) {
-		yield put({
-			type: POST_DETAIL_LOADING_FAILURE,
-			payload: err,
-		});
-		yield put(push('/'));
-	}
-}
-
-function* watchLoadPostDetail() {
-	yield takeEvery(POST_DETAIL_LOADING_REQUEST, loadPostDetail);
-}
-
-/*
  *	Post upload
  */
 const uploadPostAPI = (payload) => {
@@ -102,6 +75,8 @@ function* uploadPosts(action) {
 		const result = yield call(uploadPostAPI, action.payload);
 		yield put({ type: POST_UPLOADING_SUCCESS, payload: result.data });
 		yield put(push(`/post/${result.data._id}`));
+		// console.log(action);
+		// console.log(result);
 	} catch (err) {
 		yield put({ type: POST_UPLOADING_FAILURE, payload: err });
 		yield put(push('/'));
@@ -110,6 +85,35 @@ function* uploadPosts(action) {
 
 function* watchUploadPosts() {
 	yield takeEvery(POST_UPLOADING_REQUEST, uploadPosts);
+}
+
+/*
+ *	Post Detail
+ */
+const loadPostDetailAPI = (payload) => {
+	return axios.get(`/api/post/${payload}`);
+};
+
+function* loadPostDetail(action) {
+	try {
+		const result = yield call(loadPostDetailAPI, action.payload);
+		yield put({
+			type: POST_DETAIL_LOADING_SUCCESS,
+			payload: result.data,
+		});
+		// console.log(action);
+		// console.log(result);
+	} catch (err) {
+		yield put({
+			type: POST_DETAIL_LOADING_FAILURE,
+			payload: err,
+		});
+		yield put(push('/'));
+	}
+}
+
+function* watchLoadPostDetail() {
+	yield takeEvery(POST_DETAIL_LOADING_REQUEST, loadPostDetail);
 }
 
 /*
@@ -131,6 +135,8 @@ function* DeletePost(action) {
 		const result = yield call(DeletePostAPI, action.payload);
 		yield put({ type: POST_DELETE_SUCCESS, payload: result.data });
 		yield put(push('/'));
+		// console.log(action);
+		// console.log(result);
 	} catch (err) {
 		yield put({ type: POST_DELETE_FAILURE, payload: err });
 	}
@@ -163,6 +169,8 @@ function* PostEditLoad(action) {
 			type: POST_EDIT_LOADING_SUCCESS,
 			payload: result.data,
 		});
+		// console.log(action);
+		// console.log(result);
 	} catch (err) {
 		yield put({
 			type: POST_EDIT_LOADING_FAILURE,
@@ -195,6 +203,8 @@ function* PostEditUpload(action) {
 		const result = yield call(PostEditUploadAPI, action.payload);
 		yield put({ type: POST_EDIT_UPLOADING_SUCCESS, payload: result.data });
 		yield put(push(`/post/${result.data._id}`));
+		// console.log(action);
+		// console.log(result);
 	} catch (err) {
 		yield put({ type: POST_EDIT_UPLOADING_FAILURE, payload: err });
 	}
@@ -215,6 +225,8 @@ function* CategoryFind(action) {
 	try {
 		const result = yield call(CategoryFindAPI, action.payload);
 		yield put({ type: CATEGORY_FIND_SUCCESS, payload: result.data });
+		// console.log(action);
+		// console.log(result);
 	} catch (err) {
 		yield put({ type: CATEGORY_FIND_FAILURE, payload: err });
 	}
@@ -236,6 +248,8 @@ function* SearchResult(action) {
 		const result = yield call(SearchResultAPI, action.payload);
 		yield put({ type: SEARCH_SUCCESS, payload: result.data });
 		yield put(push(`/search/${encodeURIComponent(action.payload)}`));
+		// console.log(action);
+		// console.log(result);
 	} catch (err) {
 		yield put({ type: SEARCH_FAILURE, payload: err });
 		yield put(push('/'));

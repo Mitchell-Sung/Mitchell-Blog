@@ -22,6 +22,7 @@ const Comments = ({ id, userId, userName }) => {
 			userId,
 			userName,
 		};
+		// console.log(body);
 
 		dispatch({
 			type: COMMENT_UPLOADING_REQUEST,
@@ -35,6 +36,7 @@ const Comments = ({ id, userId, userName }) => {
 
 	const onChange = (e) => {
 		setValues({ ...form, [e.target.name]: e.target.value });
+		// console.log(form.contents);
 	};
 
 	useEffect(() => {

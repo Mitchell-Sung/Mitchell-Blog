@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useCallback, useEffect } from 'react';
-
 import {
 	Navbar,
 	Container,
@@ -10,7 +9,6 @@ import {
 	Form,
 	Button,
 } from 'reactstrap';
-
 import { Link } from 'react-router-dom';
 import LoginModal from './auth/LoginModal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,9 +22,9 @@ const AppNavbar = () => {
 	const { isAuthenticated, user, userRole } = useSelector(
 		(state) => state.auth
 	);
+	// console.log(userRole, 'UserRole');
 
 	const dispatch = useDispatch();
-
 	const onLogout = useCallback(() => {
 		dispatch({
 			type: LOGOUT_REQUEST,
@@ -67,7 +65,7 @@ const AppNavbar = () => {
 			<NavItem className="d-flex justify-content-center">
 				<Form className="col mt-2">
 					{user && user.name ? (
-						<Link>
+						<Link to={`/user/${user.name}/profile`}>
 							<Button
 								outline
 								color="light"

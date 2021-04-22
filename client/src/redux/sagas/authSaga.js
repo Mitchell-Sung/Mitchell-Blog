@@ -25,6 +25,7 @@ import {
  * 	[s22] User Login
  */
 const loginUserAPI = (loginData) => {
+	// console.log(loginData, 'loginData');
 	const config = {
 		Headers: {
 			'Content-Type': 'application/json',
@@ -33,9 +34,10 @@ const loginUserAPI = (loginData) => {
 	return axios.post('api/auth', loginData, config);
 };
 
-function* loginUser(loginAction) {
+function* loginUser(action) {
 	try {
-		const result = yield call(loginUserAPI, loginAction.payload);
+		const result = yield call(loginUserAPI, action.payload);
+		// console.log(result);
 		yield put({
 			type: LOGIN_SUCCESS,
 			payload: result.data,
@@ -55,7 +57,7 @@ function* watchLoginUser() {
 /**
  * 	[s24] User Logout
  */
-function* logout(loginAction) {
+function* logout(action) {
 	try {
 		yield put({ type: LOGOUT_SUCCESS });
 	} catch (err) {
@@ -72,12 +74,14 @@ function* watchLogout() {
  * 	[s28] Register User
  */
 const registerUserAPI = (request) => {
-	const config = {
-		Headers: {
-			'Content-Type': 'application/json',
-		},
-	};
-	return axios.post('api/user', request, config);
+	// console.log(request, 'request');
+	// const config = {
+	// 	Headers: {
+	// 		'Content-Type': 'application/json',
+	// 	},
+	// };
+	// return axios.post('api/user', request, config);
+	return axios.post('api/user', request);
 };
 
 function* registerUser(action) {
@@ -98,6 +102,7 @@ function* registerUser(action) {
 function* watchRegisterUser() {
 	yield takeEvery(REGISTER_REQUEST, registerUser);
 }
+
 /**
  * 	[s28] Clear Error
  */
@@ -110,7 +115,7 @@ function* clearError() {
 		yield put({
 			type: CLEAR_ERROR_FAILURE,
 		});
-		console.log(err, 'authSaga.ja');
+		console.error(err);
 	}
 }
 
@@ -122,19 +127,23 @@ function* watchClearError() {
  * 	[s27] User Loading
  */
 const userLoadingAPI = (token) => {
+	// console.log(token);
 	const config = {
 		headers: {
 			'Content-Type': 'application/json',
 		},
 	};
+
 	if (token) {
 		config.headers['x-auth-token'] = token;
 	}
+
 	return axios.get('api/auth/user', config);
 };
 
 function* userLoading(action) {
 	try {
+		// console.log(action, 'userLoading');
 		const result = yield call(userLoadingAPI, action.payload);
 		yield put({
 			type: USER_LOADING_SUCCESS,

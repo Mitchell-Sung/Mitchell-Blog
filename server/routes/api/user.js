@@ -1,5 +1,5 @@
-import express, { response } from 'express';
-import bcryptjs from 'bcryptjs';
+import express from 'express';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import config from '../../config/index';
 import User from '../../models/user';
@@ -19,17 +19,18 @@ router.get('/', async (request, response) => {
 		if (!users) throw Error('No users');
 		response.status(200).json(users);
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 		response.status(400).json({ msg: err.message });
 	}
 });
 
 /*
- *	@ Routes	POST all user
- *	@ Desc		GET all user
+ *	@ Routes	POST api/user
+ *	@ Desc		Register user
  * 	@ Access	Pulbic
  */
-router.post('/', async (request, response) => {
+router.post('/', (request, response) => {
+	// console.log(request);
 	const { name, email, password } = request.body;
 
 	if (!name || !email || !password) {
@@ -39,7 +40,7 @@ router.post('/', async (request, response) => {
 	User.findOne({ email }).then((user) => {
 		if (user)
 			return response
-				.status(200)
+				.status(400)
 				.json({ msg: 'User already joined exists.' });
 
 		const newUser = new User({
@@ -48,8 +49,8 @@ router.post('/', async (request, response) => {
 			password,
 		});
 
-		bcryptjs.genSalt(10, (err, salt) => {
-			bcryptjs.hash(newUser.password, salt, (err, hash) => {
+		bcrypt.genSalt(10, (err, salt) => {
+			bcrypt.hash(newUser.password, salt, (err, hash) => {
 				if (err) throw err;
 				newUser.password = hash;
 				newUser.save().then((user) => {
@@ -86,15 +87,15 @@ router.post('/:userName/profile', auth, async (request, response) => {
 		const result = await User.findById(userId, 'password');
 		// console.log(request.body, 'userName Profile');
 
-		bcryptjs.compare(previousPassword, result.password).then((isMatch) => {
+		bcrypt.compare(previousPassword, result.password).then((isMatch) => {
 			if (!isMatch) {
 				return response.status(400).json({
 					match_msg: 'It does not match the existing password.',
 				});
 			} else {
 				if (password === rePassword) {
-					bcryptjs.genSalt(10, (err, salt) => {
-						bcryptjs.hash(password, salt, (err, hash) => {
+					bcrypt.genSalt(10, (err, salt) => {
+						bcrypt.hash(password, salt, (err, hash) => {
 							if (err) throw err;
 							result.password = hash;
 							result.save();

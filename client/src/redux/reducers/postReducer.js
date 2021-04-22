@@ -8,8 +8,6 @@ import {
 	POST_DETAIL_LOADING_REQUEST,
 	POST_DETAIL_LOADING_FAILURE,
 	POST_DETAIL_LOADING_SUCCESS,
-	POST_UPLOADING_REQUEST,
-	POST_UPLOADING_SUCCESS,
 	POST_EDIT_LOADING_REQUEST,
 	POST_EDIT_LOADING_SUCCESS,
 	POST_EDIT_LOADING_FAILURE,
@@ -56,18 +54,6 @@ export default function postReducer(state = initialState, action) {
 		case POST_LOADING_FAILURE:
 			return {
 				...state,
-				loading: false,
-			};
-		case POST_UPLOADING_REQUEST:
-			return {
-				...state,
-				loading: true,
-			};
-		case POST_UPLOADING_SUCCESS:
-			return {
-				...state,
-				posts: action.payload,
-				isAuthenticated: true,
 				loading: false,
 			};
 		case POST_WRITE_REQUEST:
@@ -129,7 +115,6 @@ export default function postReducer(state = initialState, action) {
 		case POST_EDIT_UPLOADING_REQUEST:
 			return {
 				...state,
-				// posts: [],
 				loading: true,
 			};
 		case POST_EDIT_UPLOADING_SUCCESS:

@@ -12,8 +12,8 @@ const SearchInput = () => {
 
 	const onChange = (e) => {
 		setValues({ ...form, [e.target.name]: e.target.value });
+		// console.log(form);
 	};
-	// console.log(form);
 
 	const onSubmit = async (e) => {
 		await e.preventDefault();
@@ -21,7 +21,7 @@ const SearchInput = () => {
 
 		dispatch({ type: SEARCH_REQUEST, payload: searchBy });
 
-		console.log(searchBy, 'Submit Body');
+		// console.log(searchBy, 'Submit Body');
 		resetValue.current.value = '';
 	};
 

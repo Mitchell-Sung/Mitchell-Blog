@@ -1,22 +1,20 @@
-import express, { request, response } from 'express';
+import express from 'express';
 import auth from '../../middleware/auth';
-// Models
+import multer from 'multer';
+import multerS3 from 'multer-s3';
+import path from 'path';
+import AWS from 'aws-sdk';
+import dotenv from 'dotenv';
+import moment from 'moment';
 import Post from '../../models/post';
 import Category from '../../models/category';
 import User from '../../models/user';
 import Comment from '../../models/comment';
-
-const router = express.Router();
-
-// s36 start
-import multer from 'multer';
-import multerS3 from 'multer-s3'; // manage moving files with aws s3
-import path from 'path';
-import AWS from 'aws-sdk'; // support aws tool
-import dotenv from 'dotenv';
-import moment from 'moment';
+import '@babel/polyfill';
+import { isNullOrUndefined } from 'util';
 
 dotenv.config();
+const router = express.Router();
 
 const s3 = new AWS.S3({
 	accessKeyId: process.env.AWS_KEY,
@@ -45,7 +43,7 @@ const uploadS3 = multer({
 router.post(
 	'/image',
 	uploadS3.array('upload', 5),
-	async (request, response, next) => {
+	async (request, response) => {
 		try {
 			//console.log(request.files.map((v) => v.location));
 			response.json({
@@ -107,8 +105,8 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 		});
 
 		// console.log(findResult, 'Find Result');
-
-		if (findResult == null) {
+		// if (findResult == null)
+		if (isNullOrUndefined(findResult)) {
 			const newCategory = await Category.create({
 				categoryName: category,
 			});
@@ -139,17 +137,18 @@ router.post('/', auth, uploadS3.none(), async (request, response, next) => {
 });
 
 /*
- *	@route	POST api/post/:id
- *	@desc	Detail Post
- *  @access	Public
+ *	@ Route		POST api/post/:id
+ *	@ Desc		Detail Post
+ *  @ Access	Public
  */
 router.get('/:id', async (request, response, next) => {
 	try {
-		const post = await (await Post.findById(request.params.id))
-			.populate({ path: 'creator', select: 'name' }) // user
+		const post = await Post.findById(request.params.id)
+			.populate('creator', 'name')
 			.populate({ path: 'category', select: 'categoryName' });
 		post.views += 1;
 		post.save();
+		// console.log(post);
 		response.json(post);
 	} catch (err) {
 		console.error(err);
@@ -169,9 +168,10 @@ router.get('/:id/comments', async (request, response) => {
 			path: 'comments', // check 'comment' from ./models/post.js
 		});
 		const result = comment.comments;
+		// console.log(result, 'comment load');
 		response.json(result);
 	} catch (err) {
-		console.log(err);
+		console.error(err);
 	}
 });
 
@@ -198,6 +198,7 @@ router.post('/:id/comments', async (request, response, next) => {
 				},
 			},
 		});
+		response.json(newComment);
 	} catch (err) {
 		console.error(err);
 		next(err);
@@ -239,9 +240,9 @@ router.delete('/:id', auth, async (request, response) => {
  * 	@ Desc		Edit a Post
  * 	@ Access 	Private
  */
-router.get('/:id/edit', auth, async (request, response, next) => {
+router.get('/:id/edit', auth, async (request, response) => {
 	try {
-		const post = await (await Post.findById(request.params.id)).populate(
+		const post = await Post.findById(request.params.id).populate(
 			'creator',
 			'name'
 		);

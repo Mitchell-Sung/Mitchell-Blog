@@ -38,7 +38,7 @@ const PostCardOne = ({ posts }) => {
 										<CardBody>
 											<CardTitle className="text-truncate d-flex justify-content-between">
 												<span className="text-truncate">
-													{title}{' '}
+													{title}
 												</span>
 												<span>
 													<FontAwesomeIcon
@@ -53,7 +53,7 @@ const PostCardOne = ({ posts }) => {
 													color="primary"
 													className="p-2 btn-block"
 												>
-													More{' '}
+													More
 													<Badge color="light">
 														{comments.length}
 													</Badge>

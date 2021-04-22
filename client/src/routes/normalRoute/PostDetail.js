@@ -26,9 +26,7 @@ const PostDetail = (request) => {
 		(state) => state.post
 	);
 	const { userId, userName } = useSelector((state) => state.auth);
-	// s48
-	const { comments } = useSelector((state) => state.comment); // check redux for "comments"
-
+	const { comments } = useSelector((state) => state.comment); // [s48]
 	// console.log(request);
 
 	useEffect(() => {

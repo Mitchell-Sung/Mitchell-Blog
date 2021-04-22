@@ -21,7 +21,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-// Notes:
-// <Row> and <Col>???
-// Footer > Router.js > App.js > Index.js / how to find the reactstrap like row and col.

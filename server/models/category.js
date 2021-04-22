@@ -1,6 +1,8 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 
-// Create Schema
+/**
+ * 	Create category schema
+ */
 const CategorySchema = new mongoose.Schema({
 	categoryName: {
 		type: String,
